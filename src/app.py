@@ -1,11 +1,14 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
+# Flask Settings
+app.config['SECRET_KEY'] = 'supersecretkeygoeshere'
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('home.html')
 
 
 if __name__ == '__main__':
