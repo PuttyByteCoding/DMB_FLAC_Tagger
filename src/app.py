@@ -1,12 +1,16 @@
 from flask import Flask, render_template, request
 from flask_restful import Resource, Api
 from DataTypes.data_types import Song, SongList
-app = Flask(__name__)
+from security import authenticate, identity
+from flask_jwt import JWT, jwt_required #JSON web token
 
+app = Flask(__name__)
 # Flask Settings
-app.config['SECRET_KEY'] = 'supersecretkeygoeshere'
+# app.config['SECRET_KEY'] = 'supersecretkeygoeshere'
+app.secret_key = 'supersecretkeygoeshere'
 api = Api(app)
 
+jwt = JWT(app, authenticate, identity) # Creates /auth endpoint
 
 
 
