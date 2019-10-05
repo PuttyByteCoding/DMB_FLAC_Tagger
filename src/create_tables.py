@@ -4,25 +4,21 @@ connection = sqlite3.connect("data.db")
 
 cursor = connection.cursor()
 
-create_table = f"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)"
-cursor.execute(create_table)
+create_users_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)"
+cursor.execute(create_users_table)
+
+create_songs_table = "CREATE TABLE IF NOT EXISTS songs (name text, studio_album text, live_debut text)"
+cursor.execute(create_songs_table)
+
+# Populate with song samples
+insert_sample_songs_query = "INSERT INTO songs VALUES(?, ?, ?)"
+sample_songs = [
+    ("Too Much", "Crash", "1994-10-04"),
+    ("Two Step", "Crash", "1992-03-16"),
+    ("Don't Drink the Water", "Before these crowded streets", "1998-04-16"),
+    ("Warehouse", "Under the Table And Dreaming", "1991-02-19"),
+]
+cursor.executemany(insert_sample_songs_query, sample_songs)
 
 connection.commit()
 connection.close()
-
-#
-# users = [
-#     (1, 'putty', 'PuttyPass'),
-#     (2, 'jack', 'JacksonPass'),
-#     (3, 'katie', 'KatiePass'),
-# ]
-#
-# insert_query = f"INSERT INTO users VALUES(?, ?, ?)"
-# cursor.executemany(insert_query, users)
-#
-#
-# select_query = "SELECT * FROM users"
-# for row in cursor.execute(select_query):
-#     print(row)
-#
-#

@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request
-from flask_restful import Resource, Api
-from DataTypes.data_types import Song, SongList
+from flask import Flask, render_template
+from flask_restful import Api
+from song import Song, SongList
 from security import authenticate, identity
-from flask_jwt import JWT, jwt_required #JSON web token
+from flask_jwt import JWT
 from user import UserRegister
 
 app = Flask(__name__)
