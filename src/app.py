@@ -3,6 +3,7 @@ from flask_restful import Resource, Api
 from DataTypes.data_types import Song, SongList
 from security import authenticate, identity
 from flask_jwt import JWT, jwt_required #JSON web token
+from user import UserRegister
 
 app = Flask(__name__)
 # Flask Settings
@@ -20,6 +21,7 @@ def home():
 
 api.add_resource(Song, '/song/<string:name>')
 api.add_resource(SongList, '/songs/')
+api.add_resource(UserRegister, '/register')
 
 if __name__ == '__main__':
     app.run(port=7777, debug=True)
