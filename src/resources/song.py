@@ -10,7 +10,7 @@ class Song(Resource):
     parser.add_argument('live_debut', type=str, required=True,
                         help="This field cannot be blank now.  I'll remove this requirement in the future")
 
-    # @jwt_required()
+    @jwt_required()
     def get(self, name):
         song = SongModel.find_by_name(name)
         if song:
@@ -65,7 +65,7 @@ class Song(Resource):
         return {'message': "Item Deleted"}
 
 class SongList(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
