@@ -1,9 +1,9 @@
 from flask import Flask, render_template
 from flask_restful import Api
-from song import Song, SongList
 from security import authenticate, identity
 from flask_jwt import JWT
-from user import UserRegister
+from resources.song import Song, SongList
+from resources.user import UserRegister
 
 app = Flask(__name__)
 # Flask Settings

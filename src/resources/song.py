@@ -1,10 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 import sqlite3
-from flask import request, jsonify
-
-
-#Temporary static storage.  Will be in a database.
+from models.song import SongModel
 
 class Song(Resource):
     parser = reqparse.RequestParser()
@@ -13,92 +10,49 @@ class Song(Resource):
     parser.add_argument('live_debut', type=str, required=True,
                         help="This field cannot be blank now.  I'll remove this requirement in the future")
 
-    @classmethod
-    def find_by_name(cls, name):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM songs WHERE name=?"
-        result = cursor.execute(query, (name,))
-        row = result.fetchone()
-        connection.commit()
-        connection.close()
-        return row
-
-    @classmethod
-    def insert(cls, song):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = "INSERT INTO songs VALUES (?, ?, ?)"
-        cursor.execute(query, (song['name'], song['studio_album'], song['live_debut']))
-        connection.commit()
-        connection.close()
-
-    @classmethod
-    def update(cls, song):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = "UPDATE SONGS SET studio_album=? AND live_debut=? WHERE name=?"
-        cursor.execute(query, (song['studio_album'], song['live_debut'], song['name']))
-        connection.commit()
-        connection.close()
-
     # @jwt_required()
     def get(self, name):
-        row = self.find_by_name(name)
-        if row:
-            return {"song": {
-                "name": row[0],
-                "studio_album": row[1],
-                "live_debut": row[2]
-            }}, 200
+        song = SongModel.find_by_name(name)
+        if song:
+            return song.json(), 200
         else:
             return {"Message": f"The song {name} was not found"}, 404
 
     # @jwt_required()
     def post(self, name):
-        if self.find_by_name(name):
+        if SongModel.find_by_name(name):
             return {"Message": f"The song {name} already exists"}, 404
 
         data = Song.parser.parse_args()
 
-        song = {
-            'name': name,
-            'studio_album': data['studio_album'], #TODO: Check for existance of 'studio_album', add default if not there
-            'live_debut': data['live_debut'] #TODO: Check for existance of 'live_debut', add default if not there
-        }
+        song = SongModel(name, data['studio_album'], data['live_debut'] )
 
         try:
-            self.insert(song)
+            song.insert()
         except:
             return {"message": "An Error occurred inserting the song"}, 500 #Internal server error
 
         #TODO: Update live debut if this new entry is the oldest
-        return song, 201 # 201 is the code for "Created"
+        return song.json(), 201 # 201 is the code for "Created"
 
     def put(self, name):
         data = Song.parser.parse_args()
-        song = self.find_by_name(name)
-        updated_song = {
-            'name': name,
-            'studio_album': data['studio_album'],
-            'live_debut': data['live_debut']
-        }
+
+        song = SongModel.find_by_name(name)
+        updated_song = SongModel(name, data['studio_album'], data['live_debut'])
 
         if song is None:
             try:
-                self.insert(updated_song)
+               updated_song.insert()
             except:
                 return {"message": "An Error occurred inserting the song"}, 500  # Internal server error
         else:
             try:
-                self.update(updated_song)
+                updated_song.update()
             except:
                 return {"message": "An Error occurred updating the song"}, 500  # Internal server error
 
-        return updated_song
+        return updated_song.json()
 
     def delete(self, name):
         connection = sqlite3.connect("data.db")
