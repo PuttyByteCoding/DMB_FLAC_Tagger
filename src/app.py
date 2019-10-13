@@ -3,6 +3,7 @@ from flask_restful import Api
 from security import authenticate, identity
 from flask_jwt import JWT
 from resources.song import Song, SongList
+from resources.venue import Venue, VenueList
 from resources.user import UserRegister
 
 
@@ -14,16 +15,21 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Turns off the flask SQLAlchemy tracker, does NOT turn off the SQLAlchemy tracker.
 api = Api(app)
 
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 jwt = JWT(app, authenticate, identity) # Creates /auth endpoint
-
-
 
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
 
+
 api.add_resource(Song, '/song/<string:name>')
 api.add_resource(SongList, '/songs/')
+api.add_resource(Venue, '/venue/<string:name>/<string:city>')
+api.add_resource(VenueList, '/venues/')
 api.add_resource(UserRegister, '/register')
 
 
