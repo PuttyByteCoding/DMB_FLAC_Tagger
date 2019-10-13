@@ -6,6 +6,7 @@ from resources.song import Song, SongList
 from resources.venue import Venue, VenueList
 from resources.concert import Concert, ConcertList
 from resources.user import UserRegister
+from create_sample_data import add_sample_songs, add_sample_venues, add_sample_concerts
 
 
 app = Flask(__name__)
@@ -19,6 +20,9 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     db.create_all()
+    add_sample_songs()
+    add_sample_venues()
+    add_sample_concerts()
 
 jwt = JWT(app, authenticate, identity) # Creates /auth endpoint
 
