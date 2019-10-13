@@ -4,6 +4,7 @@ from security import authenticate, identity
 from flask_jwt import JWT
 from resources.song import Song, SongList
 from resources.venue import Venue, VenueList
+from resources.concert import Concert, ConcertList
 from resources.user import UserRegister
 
 
@@ -28,8 +29,14 @@ def home():
 
 api.add_resource(Song, '/song/<string:name>')
 api.add_resource(SongList, '/songs/')
+
 api.add_resource(Venue, '/venue/<string:name>/<string:city>')
 api.add_resource(VenueList, '/venues/')
+
+api.add_resource(Concert, '/concert/<string:date>')
+api.add_resource(ConcertList, '/concert/')
+
+
 api.add_resource(UserRegister, '/register')
 
 
