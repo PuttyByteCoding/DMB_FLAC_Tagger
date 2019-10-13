@@ -1,6 +1,12 @@
-import sqlite3
+from db import db
 
-class SongModel:
+class SongModel(db.Model):
+    __tablename__ = "songs"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    studio_album = db.Column(db.String(255))
+    live_debut = db.Column(db.String(255))
+
     def __init__(self, name, studio_album, live_debut):
         self.name = name
         self.studio_album = studio_album
@@ -16,32 +22,12 @@ class SongModel:
 
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
+        return cls.query.filter_by(name=name).first()
 
-        query = "SELECT * FROM songs WHERE name=?"
-        result = cursor.execute(query, (name,))
-        row = result.fetchone()
-        connection.commit()
-        connection.close()
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
-        if row:
-            return cls(*row) # *row is the same as row[0], row[1], row[2]
-
-    def insert(self):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = "INSERT INTO songs VALUES (?, ?, ?)"
-        cursor.execute(query, (self.name, self.studio_album, self.live_debut))
-        connection.commit()
-        connection.close()
-
-    def update(self):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = "UPDATE SONGS SET studio_album=? AND live_debut=? WHERE name=?"
-        cursor.execute(query, (self.studio_album, self.live_debut, self.name))
-        connection.commit()
-        connection.close()
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
