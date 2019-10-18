@@ -1,38 +1,29 @@
 from resources.song import SongModel
-from resources.venue import VenueModel
 from resources.concert import ConcertModel
-from resources.user import UserModel
 
 def add_sample_songs():
-    song1 = SongModel("Too Much", "Crash", "1992-05-01")
-    song2 = SongModel("So Much to Say", "Crash", "1993-04-12")
-    song3 = SongModel("Pig", "Before these crowded streets", "1998-04-21")
-    song4 = SongModel("Gravedigger", "Some Devil", "2003-02-19")
+    song1 = SongModel("Too Much")
+    song2 = SongModel("So Much to Say")
+    song3 = SongModel("Pig")
+    song4 = SongModel("Gravedigger")
 
     song1.save_to_db()
     song2.save_to_db()
     song3.save_to_db()
     song4.save_to_db()
 
-def add_sample_venues():
-    venue1 = VenueModel("Nissian Pavillion", "Bristow", "VA")
-    venue2 = VenueModel("Wolf Trap", "Vienna", "VA")
-    venue3 = VenueModel("The Gorge", "George", "WA")
-    venue4 = VenueModel("Red Rocks", "Boulder", "CO")
-
-    venue1.save_to_db()
-    venue2.save_to_db()
-    venue3.save_to_db()
-    venue4.save_to_db()
-
 def add_sample_concerts():
-    concert1 = ConcertModel("1992-02-24", description="Farm Aid")
-    concert2 = ConcertModel("1995-03-12")
-    concert3 = ConcertModel("1998-02-04")
-    concert4 = ConcertModel("2002-08-14")
+    concert1 = ConcertModel("1992-02-12", "DMB", "Wolf Trap", "Vienna", "VA", "USA", "Putty", "mic", "Farm Aid")
+    concert2 = ConcertModel("1994-09-15", "DM", "The Gorge", "George", "WA", "USA", "Crumbo", "mic", "None")
+    concert3 = ConcertModel("1997-03-03", "D+T", "Radio City Music Hall", "New York", "NY", "USA", "Tommy", "FM", "")
+    concert4 = ConcertModel("2012-05-21", "DMB", "Riverbend Music Center", "Cincinnatti", "OH", "USA", "Kelly", "mic", "")
+    concert5 = ConcertModel("1992-02-24", description="Farm Aid")
+    concert6 = ConcertModel("1995-03-12")
 
     concert1.save_to_db()
     concert2.save_to_db()
     concert3.save_to_db()
     concert4.save_to_db()
+    concert5.save_to_db()
+    concert6.save_to_db()
 

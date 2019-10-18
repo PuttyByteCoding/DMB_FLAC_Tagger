@@ -3,15 +3,12 @@ from flask_restful import Api
 from security import authenticate, identity
 from flask_jwt import JWT
 from resources.song import Song, SongList
-from resources.venue import Venue, VenueList
 from resources.concert import Concert, ConcertList
 from resources.user import UserRegister
-from create_sample_data import add_sample_songs, add_sample_venues, add_sample_concerts
+from create_sample_data import add_sample_songs, add_sample_concerts
 
 
 app = Flask(__name__)
-# Flask Settings
-# app.config['SECRET_KEY'] = 'supersecretkeygoeshere'
 app.secret_key = 'supersecretkeygoeshere'
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Turns off the flask SQLAlchemy tracker, does NOT turn off the SQLAlchemy tracker.
@@ -21,7 +18,6 @@ api = Api(app)
 def create_tables():
     db.create_all()
     add_sample_songs()
-    add_sample_venues()
     add_sample_concerts()
 
 jwt = JWT(app, authenticate, identity) # Creates /auth endpoint
@@ -34,12 +30,8 @@ def home():
 api.add_resource(Song, '/song/<string:name>')
 api.add_resource(SongList, '/songs/')
 
-api.add_resource(Venue, '/venue/<string:name>/<string:city>')
-api.add_resource(VenueList, '/venues/')
-
 api.add_resource(Concert, '/concert/<string:date>')
 api.add_resource(ConcertList, '/concert/')
-
 
 api.add_resource(UserRegister, '/register')
 
