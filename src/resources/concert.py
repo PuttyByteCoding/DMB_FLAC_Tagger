@@ -4,12 +4,14 @@ from models.concert import ConcertModel
 
 class Concert(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('venue', type=str, required=False,
-                        help="This field is required")
-    parser.add_argument('taper', type=str, required=False,
-                        help="This field is required")
-    parser.add_argument('description', type=str, required=False,
-                        help="This field is required")
+    parser.add_argument('band_configuration', type=str, required=True, help="Some Help Message")
+    parser.add_argument('venue_name', type=str, required=True, help="Some Help Message")
+    parser.add_argument('venue_city', type=str, required=True, help="Some Help Message")
+    parser.add_argument('venue_state', type=str, required=True, help="Some Help Message")
+    parser.add_argument('venue_country', type=str, required=True, help="Some Help Message")
+    parser.add_argument('taper_name', type=str, required=True, help="Some Help Message")
+    parser.add_argument('recording_type', type=str, required=True, help="Some Help Message")
+    parser.add_argument('description', type=str, required=True, help="Some Help Message")
 
     @jwt_required()
     def get(self, date):
@@ -26,14 +28,21 @@ class Concert(Resource):
 
         data = Concert.parser.parse_args()
 
-        concert = ConcertModel(date, data['venue'], data['taper'], data['description'])
+        concert = ConcertModel(date,
+                                data['band_configuration'],
+                                data['venue_name'],
+                                data['venue_city'],
+                                data['venue_state'],
+                                data['venue_country'],
+                                data['taper_name'],
+                                data['recording_type'],
+                                data['description'])
 
         try:
             concert.save_to_db()
         except:
             return {"message": "An Error occurred inserting the concert"}, 500 #Internal server error
 
-        #TODO: Update live debut if this new entry is the oldest
         return concert.json(), 201 # 201 is the code for "Created"
 
     def put(self, date):
@@ -42,10 +51,24 @@ class Concert(Resource):
         concert = ConcertModel.find_by_date(date)
 
         if concert is None:
-            concert = ConcertModel(date, data['venue'], data['taper'], data['description'])
+            concert = ConcertModel(date,
+                                   data['band_configuration'],
+                                   data['venue_name'],
+                                   data['venue_city'],
+                                   data['venue_state'],
+                                   data['venue_country'],
+                                   data['taper_name'],
+                                   data['recording_type'],
+                                   data['description']
+                                   )
         else:
-            concert.venue = data['venue']
-            concert.taper = data['taper']
+            concert.band_configuration = data['band_configuration']
+            concert.venue_name = data['venue_name']
+            concert.venue_city = data['venue_city']
+            concert.venue_state = data['venue_state']
+            concert.venue_country = data['venue_country']
+            concert.taper_name = data['taper_name']
+            concert.recording_type = data['recording_type']
             concert.description = data['description']
 
         concert.save_to_db()
