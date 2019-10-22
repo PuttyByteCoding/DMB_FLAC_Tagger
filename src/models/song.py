@@ -5,6 +5,8 @@ class SongModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
 
+    concerts = db.relationship("XrefConcertsSongsModel", back_populates="song")
+
     def __init__(self, name):
         self.name = name
 
@@ -12,7 +14,6 @@ class SongModel(db.Model):
         return {
             'name': self.name
         }
-
 
     @classmethod
     def find_by_name(cls, name):

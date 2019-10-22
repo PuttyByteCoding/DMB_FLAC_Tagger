@@ -13,6 +13,8 @@ class ConcertModel(db.Model):
     recording_type = db.Column(db.String(255))
     description = db.Column(db.String(255))
 
+    songs = db.relationship("XrefConcertsSongsModel", back_populates="concert")
+
     def __init__(self, date="Unknown", band_configuration="Unknown", venue_name="Unknown", venue_city="Unknown",
                  venue_state="Unknown", venue_country="Unknown", taper_name="Unknown", recording_type="Unknown",
                  description="Unknown"):
