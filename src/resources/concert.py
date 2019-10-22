@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 from models.concert import ConcertModel
+from models.xref_concerts_songs import XrefConcertsSongsModel
+from models.song import SongModel
 
 class Concert(Resource):
     parser = reqparse.RequestParser()
@@ -37,6 +39,14 @@ class Concert(Resource):
                                 data['taper_name'],
                                 data['recording_type'],
                                 data['description'])
+
+        # Make this a function.  Add sample setlist
+        #TODO: Accept a ordered list of strings as the setlist.
+        xref = XrefConcertsSongsModel(setlist_position=78)
+        xref.song = SongModel.find_by_name("Here On Out")
+        concert.songs.append(xref)
+        xref.save_to_db()
+        concert.save_to_db()
 
         try:
             concert.save_to_db()
