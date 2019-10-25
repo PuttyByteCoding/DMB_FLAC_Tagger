@@ -1,6 +1,4 @@
 from db import db
-from models.concert import ConcertModel
-from models.song import SongModel
 
 
 class XrefConcertsSongsModel(db.Model):
