@@ -1,8 +1,9 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 from flask_jwt import jwt_required
 from models.concert import ConcertModel
 from models.xref_concerts_songs import XrefConcertsSongsModel
 from models.song import SongModel
+import json
 
 class Concert(Resource):
     parser = reqparse.RequestParser()
@@ -29,6 +30,7 @@ class Concert(Resource):
             return {"Message": f"A concert for {date} already exists.  Multiple concerts on the same date are not allowed (for now)"}, 404
 
         data = Concert.parser.parse_args()
+        req_data = json.loads(request.data)
 
         concert = ConcertModel(date,
                                 data['band_configuration'],
@@ -41,12 +43,25 @@ class Concert(Resource):
                                 data['description'])
 
         # Make this a function.  Add sample setlist
-        #TODO: Accept a ordered list of strings as the setlist.
-        xref = XrefConcertsSongsModel(setlist_position=78)
-        xref.song = SongModel.find_by_name("Here On Out")
-        concert.songs.append(xref)
-        xref.save_to_db()
-        concert.save_to_db()
+        # concert.save_to_db()
+        setlist_position = 1
+        for song in req_data['setlist']:
+            a=1
+            xref = XrefConcertsSongsModel(setlist_position=setlist_position)
+            xref.song = SongModel.find_by_name(song)
+            concert.songs.append(xref)
+            # concert.save_to_db()
+            # xref.save_to_db()
+            setlist_position += 1
+        # concert.save_to_db()
+        #
+        #
+        # #TODO: Accept a ordered list of strings as the setlist.
+        # xref = XrefConcertsSongsModel(setlist_position=78)
+        # xref.song = SongModel.find_by_name("Here On Out")
+        # concert.songs.append(xref)
+        # xref.save_to_db()
+        # concert.save_to_db()
 
         try:
             concert.save_to_db()

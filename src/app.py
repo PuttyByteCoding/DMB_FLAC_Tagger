@@ -5,6 +5,7 @@ from flask_jwt import JWT
 from resources.song import Song, SongList
 from resources.concert import Concert, ConcertList
 from resources.user import UserRegister
+from resources.setlist import Setlist
 from create_sample_data import add_sample_songs, add_sample_concerts
 
 
@@ -32,6 +33,9 @@ api.add_resource(SongList, '/songs/')
 
 api.add_resource(Concert, '/concert/<string:date>')
 api.add_resource(ConcertList, '/concert/')
+
+api.add_resource(Setlist, '/setlist/<string:date>')
+# api.add_resource(ConcertList, '/setlists/')
 
 api.add_resource(UserRegister, '/register')
 
