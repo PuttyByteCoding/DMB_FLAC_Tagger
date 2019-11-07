@@ -1,5 +1,5 @@
-from resources.song import SongModel
-from resources.concert import ConcertModel
+from resources.song import SongOrm
+from resources.concert import ConcertOrm
 
 def add_sample_songs():
     song_list_from_albums = ["#27", "#34", "#36", "#40", "#41", "Again And Again", "All Along the Watchtower", "Alligator Pie",
@@ -23,16 +23,16 @@ def add_sample_songs():
                              "When The World Ends", "Where Are You Going", "Why I Am", "Write A Song", "You & Me", "You Might Die Trying",
                              "You Never Know"]
     for song_name in song_list_from_albums:
-        song = SongModel(song_name)
+        song = SongOrm(song_name)
         song.save_to_db()
 
 def add_sample_concerts():
-    concert1 = ConcertModel("1992-02-12", "DMB", "Wolf Trap", "Vienna", "VA", "USA", "Putty", "mic", "Farm Aid")
-    concert2 = ConcertModel("1994-09-15", "DM", "The Gorge", "George", "WA", "USA", "Crumbo", "mic", "None")
-    concert3 = ConcertModel("1997-03-03", "D+T", "Radio City Music Hall", "New York", "NY", "USA", "Tommy", "FM", "")
-    concert4 = ConcertModel("2012-05-21", "DMB", "Riverbend Music Center", "Cincinnatti", "OH", "USA", "Kelly", "mic", "")
-    concert5 = ConcertModel("1992-02-24", description="Farm Aid")
-    concert6 = ConcertModel("1995-03-12")
+    concert1 = ConcertOrm("1992-02-12", "DMB", "Wolf Trap", "Vienna", "VA", "USA", "Putty", "mic", "Farm Aid")
+    concert2 = ConcertOrm("1994-09-15", "DM", "The Gorge", "George", "WA", "USA", "Crumbo", "mic", "None")
+    concert3 = ConcertOrm("1997-03-03", "D+T", "Radio City Music Hall", "New York", "NY", "USA", "Tommy", "FM", "")
+    concert4 = ConcertOrm("2012-05-21", "DMB", "Riverbend Music Center", "Cincinnatti", "OH", "USA", "Kelly", "mic", "")
+    concert5 = ConcertOrm("1992-02-24", description="Farm Aid")
+    concert6 = ConcertOrm("1995-03-12")
 
     concert1.save_to_db()
     concert2.save_to_db()

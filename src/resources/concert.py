@@ -1,8 +1,8 @@
 from flask_restful import Resource, reqparse, request
 from flask_jwt import jwt_required
-from models.concert import ConcertModel
+from models.concert import ConcertOrm
 from models.xref_concerts_songs import XrefConcertsSongsModel
-from models.song import SongModel
+from models.song import SongOrm
 import json
 
 class Concert(Resource):
@@ -18,7 +18,7 @@ class Concert(Resource):
 
     @jwt_required()
     def get(self, date):
-        concert = ConcertModel.find_by_date(date)
+        concert = ConcertOrm.find_by_date(date)
         if concert:
             return concert.json(), 200
         else:
@@ -26,21 +26,21 @@ class Concert(Resource):
 
     # @jwt_required()
     def post(self, date):
-        if ConcertModel.find_by_date(date):
+        if ConcertOrm.find_by_date(date):
             return {"Message": f"A concert for {date} already exists.  Multiple concerts on the same date are not allowed (for now)"}, 404
 
         data = Concert.parser.parse_args()
         req_data = json.loads(request.data)
 
-        concert = ConcertModel(date,
-                                data['band_configuration'],
-                                data['venue_name'],
-                                data['venue_city'],
-                                data['venue_state'],
-                                data['venue_country'],
-                                data['taper_name'],
-                                data['recording_type'],
-                                data['description'])
+        concert = ConcertOrm(date,
+                             data['band_configuration'],
+                             data['venue_name'],
+                             data['venue_city'],
+                             data['venue_state'],
+                             data['venue_country'],
+                             data['taper_name'],
+                             data['recording_type'],
+                             data['description'])
 
         # Make this a function.  Add sample setlist
         # concert.save_to_db()
@@ -48,7 +48,7 @@ class Concert(Resource):
         for song in req_data['setlist']:
             a=1
             xref = XrefConcertsSongsModel(setlist_position=setlist_position)
-            xref.song = SongModel.find_by_name(song)
+            xref.song = SongOrm.find_by_name(song)
             concert.songs.append(xref)
             # concert.save_to_db()
             # xref.save_to_db()
@@ -73,19 +73,19 @@ class Concert(Resource):
     def put(self, date):
         data = Concert.parser.parse_args()
 
-        concert = ConcertModel.find_by_date(date)
+        concert = ConcertOrm.find_by_date(date)
 
         if concert is None:
-            concert = ConcertModel(date,
-                                   data['band_configuration'],
-                                   data['venue_name'],
-                                   data['venue_city'],
-                                   data['venue_state'],
-                                   data['venue_country'],
-                                   data['taper_name'],
-                                   data['recording_type'],
-                                   data['description']
-                                   )
+            concert = ConcertOrm(date,
+                                 data['band_configuration'],
+                                 data['venue_name'],
+                                 data['venue_city'],
+                                 data['venue_state'],
+                                 data['venue_country'],
+                                 data['taper_name'],
+                                 data['recording_type'],
+                                 data['description']
+                                 )
         else:
             concert.band_configuration = data['band_configuration']
             concert.venue_name = data['venue_name']
@@ -100,7 +100,7 @@ class Concert(Resource):
         return concert.json()
 
     def delete(self, date):
-        concert = ConcertModel.find_by_date(date)
+        concert = ConcertOrm.find_by_date(date)
         if concert:
             concert.delete_from_db()
         return {"message": "Concert was deleted"}, 200
@@ -108,4 +108,4 @@ class Concert(Resource):
 class ConcertList(Resource):
     @jwt_required()
     def get(self):
-        return {'concerts': [concert.json() for concert in ConcertModel.query.all()]}
+        return {'concerts': [concert.json() for concert in ConcertOrm.query.all()]}
