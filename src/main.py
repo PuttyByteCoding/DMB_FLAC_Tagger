@@ -3,8 +3,9 @@ from fastapi.encoders import jsonable_encoder
 import uvicorn
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, text
 from sqlalchemy.sql import select
-
+from pydantic import BaseModel
 from sqlalchemy import create_engine
+
 engine = create_engine("sqlite:///data.db", echo=True)
 
 metadata = MetaData()
@@ -51,6 +52,22 @@ conn = engine.connect()
 #             [{'concert_id': 1,'song_id': 34,'setlist_position': 1},{'concert_id': 1,'song_id': 23,'setlist_position': 2},{'concert_id': 1,'song_id': 14,'setlist_position': 3},{'concert_id': 1,'song_id': 58,'setlist_position': 4},{'concert_id': 1,'song_id': 97,'setlist_position': 5},{'concert_id': 1,'song_id': 102,'setlist_position': 6},{'concert_id': 1,'song_id': 25,'setlist_position': 7},{'concert_id': 1,'song_id': 7,'setlist_position': 8}]
 #              )
 
+#Concert Model
+class ConcertModel(BaseModel):
+    date: str
+    band_configuration: str
+    venue_name: str  #TODO: Create a separate tabl and model for this?
+    venue_city: str
+    venue_state: str
+    venue_country: str
+    taper_name: str #TODO: Create a separate tabl and model for this?
+    recording_type: str #TODO: Create a separate tabl and model for this?
+    description: str
+
+#Setlist Model #TODO: Create This
+
+#Song Model #TODO: Create This?
+
 
 app = FastAPI()
 
@@ -59,6 +76,8 @@ async def root():
     return {"message": "Hello World"}
 
 
+
+# Concert EntryPoints
 @app.get("/concert/")
 async def all_concerts():
     sql_query = select([concerts])
@@ -66,9 +85,39 @@ async def all_concerts():
     return jsonable_encoder([dict(row) for row in result])
 
 
+@app.post("/concert/") #TODO: Should I support put and post?
+async def post_concert(concert: ConcertModel):
+    json_concert = jsonable_encoder(concert)
+    conn.execute(concerts.insert(), json_concert)
+    return concert
+
+
+@app.put("/concert/") #TODO: Should I support put and post?
+async def put_concert(concert: ConcertModel):
+    json_concert = jsonable_encoder(concert)
+    conn.execute(concerts.insert(), json_concert)
+    return concert
+
+
 @app.get("/concert/{concert_date}")
-async def a_concert(concert_date: str):
-    return {"Concert date entered": concert_date}
+async def get_concert(concert_date: str):
+    sql_query = select([concerts]).where(concerts.c.date == concert_date)
+    result = conn.execute(sql_query)
+    json_result = jsonable_encoder([dict(row) for row in result])
+    return json_result
+
+
+@app.delete("/concert/{concert_date}")
+async def del_concert(concert_date: str):
+    get_concert_id_query = select([concerts]).where(concerts.c.date == concert_date)
+    result = conn.execute(get_concert_id_query).fetchone()
+    concert_id = result["id"]
+    conn.execute(concerts.delete().where(concerts.c.id == concert_id))
+    return {"result": f"Deleted concert{concert_date}"}
+
+
+
+
 
 
 @app.get("/songs/")
@@ -89,6 +138,9 @@ async def get_concert_setlist(concert_date: str):
     result = conn.execute(setlist_query, concert_id="1")
     json_result = jsonable_encoder([dict(row) for row in result])
     return json_result
+
+
+
 
 
 if __name__ == '__main__':
