@@ -4,6 +4,7 @@ import uvicorn
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, text
 from sqlalchemy.sql import select
 from pydantic import BaseModel
+from typing import List
 from sqlalchemy import create_engine
 
 engine = create_engine("sqlite:///data.db", echo=True)
@@ -64,7 +65,13 @@ class ConcertModel(BaseModel):
     recording_type: str #TODO: Create a separate tabl and model for this?
     description: str
 
-#Setlist Model #TODO: Create This
+class SetlistSongModel(BaseModel):
+    position: int
+    song_title: str
+
+class SetlistModel(BaseModel):
+    concert_date: str
+    setlist: List[SetlistSongModel]
 
 #Song Model #TODO: Create This?
 
@@ -75,8 +82,6 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-
-
 # Concert EntryPoints
 @app.get("/concert/")
 async def all_concerts():
@@ -85,14 +90,14 @@ async def all_concerts():
     return jsonable_encoder([dict(row) for row in result])
 
 
-@app.post("/concert/") #TODO: Should I support put and post?
+@app.post("/concert/") #Create a concert TODO: Should I support put and post?
 async def post_concert(concert: ConcertModel):
     json_concert = jsonable_encoder(concert)
     conn.execute(concerts.insert(), json_concert)
     return concert
 
 
-@app.put("/concert/") #TODO: Should I support put and post?
+@app.put("/concert/") #Update a concert TODO: Should I support put and post?
 async def put_concert(concert: ConcertModel):
     json_concert = jsonable_encoder(concert)
     conn.execute(concerts.insert(), json_concert)
@@ -116,10 +121,6 @@ async def del_concert(concert_date: str):
     return {"result": f"Deleted concert{concert_date}"}
 
 
-
-
-
-
 @app.get("/songs/")
 async def all_songs():
     sql_query = select([songs])
@@ -128,20 +129,59 @@ async def all_songs():
     return json_result
 
 
+@app.post("/setlist/") #Create a setlist TODO: Should I support put and post?
+async def post_setlist(setlist: SetlistModel):
+    #TODO: Handle a concert date that does not exist
+    concert_date = setlist.concert_date
+    sql_get_concert_query = select([concerts]).where(concerts.c.date == concert_date)
+    result = conn.execute(sql_get_concert_query).fetchone()
+    concert_id = result["id"]
+
+    for song in setlist.setlist:
+        sql_get_song_id_query = select([songs]).where(songs.c.name == song.song_title)
+        result = conn.execute(sql_get_song_id_query).fetchone()
+        song_id = result["id"]
+        conn.execute(xref_concerts_songs.insert(),
+                     {
+                         'concert_id': concert_id,
+                         'song_id': song_id,
+                         'setlist_position': song.position
+                     })
+    return {"message": "Setlist Added"}
+
+
+@app.put("/setlist/") #Update a setlist TODO: Should I support put and post?
+async def put_setlist(setlist: SetlistModel):
+    # TODO: Handle a concert date that does not exist
+    concert_date = setlist.concert_date
+    sql_get_concert_query = select([concerts]).where(concerts.c.date == concert_date)
+    result = conn.execute(sql_get_concert_query).fetchone()
+    concert_id = result["id"]
+
+    for song in setlist.setlist:
+        sql_get_song_id_query = select([songs]).where(songs.c.name == song.song_title)
+        result = conn.execute(sql_get_song_id_query).fetchone()
+        song_id = result["id"]
+        conn.execute(xref_concerts_songs.insert(),
+                     {
+                         'concert_id': concert_id,
+                         'song_id': song_id,
+                         'setlist_position': song.position
+                     })
+    return {"message": "Setlist Added"}
+
+
 @app.get("/setlist/{concert_date}")
 async def get_concert_setlist(concert_date: str):
-    sql_query = select([concerts]).where(concerts.c.date == concert_date)
-    result = conn.execute(sql_query).fetchone()
-    concert_id = str(result["id"]) #TODO: Why doesn't this work?  I can pass "1" below, and it works.  why doens't my cast work?
+    # TODO: Handle a concert date that does not exist
+    sql_get_concert_query = select([concerts]).where(concerts.c.date == concert_date)
+    result = conn.execute(sql_get_concert_query).fetchone()
+    concert_id = result["id"] #TODO: Why doesn't this work?  I can pass "1" below, and it works.  why doens't my cast work?
     setlist_query = text(
-        """SELECT setlist.setlist_position, songs.name FROM (SELECT * FROM xref_concerts_songs WHERE xref_concerts_songs.concert_id = :concert_id) as setlist LEFT JOIN songs on setlist.song_id = songs.id""")
-    result = conn.execute(setlist_query, concert_id="1")
+        "SELECT setlist.setlist_position, songs.name FROM (SELECT * FROM xref_concerts_songs WHERE xref_concerts_songs.concert_id = :c) as setlist LEFT JOIN songs on setlist.song_id = songs.id")
+    result = conn.execute(setlist_query, c=concert_id)
     json_result = jsonable_encoder([dict(row) for row in result])
     return json_result
-
-
-
-
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
