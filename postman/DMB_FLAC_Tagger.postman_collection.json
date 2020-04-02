@@ -1,0 +1,757 @@
+{
+	"info": {
+		"_postman_id": "8b6e850b-c76c-423f-9315-1a3f74962c25",
+		"name": "DMB_FLAC_Tagger",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "songs",
+			"item": [
+				{
+					"name": "/songs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "73b6fdb8-53ec-4d9e-8d75-65bf3f987c22",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/songs",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"songs"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/song/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e44bad93-841a-4d6c-9195-3b31f1b78edd",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/song/Rapunzel",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"song",
+								"Rapunzel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/song/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "16f2fa6c-515e-4d2a-9c35-291506cfdc39",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAyNzgzMDEsImlhdCI6MTU3MDI3ODAwMSwibmJmIjoxNTcwMjc4MDAxLCJpZGVudGl0eSI6MX0.gJNLVptBdDDB7KFoBE6R7HB1QjFnOBwpM1dCkH9C6Ts",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/song/rap2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"song",
+								"rap2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/song/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8b0279c-cdbb-4c72-b66f-87ac15b15b18",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NzAyNzY5NzQsImlhdCI6MTU3MDI3NjY3NCwibmJmIjoxNTcwMjc2Njc0LCJpZGVudGl0eSI6MX0.WNaMD6uv6oOiHq6WjIJf8Y705eujQIFZQtCOqifVnp4",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"studio_album\": \"Before These Crowded Streets again\",\n\t\"live_debut\": \"1996-09-12\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/song/Rapunzel34",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"song",
+								"Rapunzel34"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/song/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4d94db29-9325-4664-b4d4-4f98d0a08034",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{url}}/song/rap2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"song",
+								"rap2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "venues",
+			"item": [
+				{
+					"name": "/venues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/venues",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venues"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/venue/<name>",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/venue/WolfTrap/Vienna",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venue",
+								"WolfTrap",
+								"Vienna"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/venue/<name>",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"state\": \"Virginia\",\n    \"country\": \"United States\",\n    \"alias\": 14\n}"
+						},
+						"url": {
+							"raw": "{{url}}/venue/WolfTrapa_f/Vienna",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venue",
+								"WolfTrapa_f",
+								"Vienna"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/venue/<name>/<city>",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"state\": \"Virginia\",\n    \"country\": \"United States\",\n    \"alias\": 14\n}"
+						},
+						"url": {
+							"raw": "{{url}}/venue/WolfTrapa_r/Vienna",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venue",
+								"WolfTrapa_r",
+								"Vienna"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/venue/<name>/<city>",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{url}}/venue/WolfTrapa_r/Vienna",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venue",
+								"WolfTrapa_r",
+								"Vienna"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "concerts",
+			"item": [
+				{
+					"name": "/concert",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://0.0.0.0:8000/concert/",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "8000",
+							"path": [
+								"concert",
+								""
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/concert/2019-03-22",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concert",
+								"2019-03-22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"band_configuration\": \"DMB\",\n    \"venue_name\": \"Wolf Trap\",\n    \"venue_city\": \"Vienna\",\n    \"venue_state\": \"VA\",\n    \"venue_country\": \"USA\",\n    \"taper_name\": \"New taper\",\n    \"recording_type\": \"mic\",\n    \"description\": \"Farm Aid\",\n    \"setlist\": [\"Crush\", \"Cry Freedom\", \"Dancing Nancies\", \"Digging A Ditch\", \"Dive In\"]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concert/2019-04-17",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concert",
+								"2019-04-17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"band_configuration\": \"DMB\",\n    \"venue_name\": \"Wolf Trap\",\n    \"venue_city\": \"Vienna\",\n    \"venue_state\": \"VA\",\n    \"venue_country\": \"USA\",\n    \"taper_name\": \"New taper\",\n    \"recording_type\": \"mic\",\n    \"description\": \"Farm Aid\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concert/1997-03-09",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concert",
+								"1997-03-09"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{url}}/concert/1997-03-09",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concert",
+								"1997-03-09"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "setlists",
+			"item": [
+				{
+					"name": "/setlists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/setlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlists"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/setlist/2019-04-17",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"2019-04-17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "{{url}}/setlist/Too Much",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"Too Much"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "{{url}}/setlist/<name>",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"<name>"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{url}}/setlist/<name>",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"<name>"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "/auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cfd31b87-52ad-406f-a247-22731ec22e10",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Access Token was not empty\"] = jsonData.access_token !== undefined;",
+									"pm.environment.set(\"jwt_token\", jsonData.access_token);",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"putty2\",\n\t\"password\": \"PuttyPass\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e9e36f66-af07-426a-a1f1-2395d14a991f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"putty2\",\n\t\"password\": \"PuttyPass\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"register"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

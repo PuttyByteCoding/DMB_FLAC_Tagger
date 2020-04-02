@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "88037eea-7dc9-4bbf-b111-c1e828352f33",
+		"name": "DMB_FLAC_Tagger - FastAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "concerts",
+			"item": [
+				{
+					"name": "/concert",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/venues",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"venues"
+							]
+						},
+						"description": "This should return a list of all songs in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/concerts/date",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"date"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/song/Too Much",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"song",
+								"Too Much"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/song/<name>",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"song",
+								"<name>"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/concert/<date>",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/song/<name>",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"song",
+								"<name>"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "setlists",
+			"item": [
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/setlist/2019-04-17",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"2019-04-17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "{{url}}/setlist/Too Much",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"Too Much"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"year_written\": 1995\n}"
+						},
+						"url": {
+							"raw": "{{url}}/setlist/<name>",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"<name>"
+							]
+						},
+						"description": "This will create a new song, or update an existing song."
+					},
+					"response": []
+				},
+				{
+					"name": "/setlist/<date>",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{url}}/setlist/<name>",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"setlist",
+								"<name>"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
