@@ -1,0 +1,17 @@
+{
+  "name": "dmb_flac_tagger_frontend",
+  "version": "1.0.0",
+  "description": "Webpage to tag DMB FLAC files",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Putty",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1",
+    "selectize": "^0.12.6"
+  }
+}
