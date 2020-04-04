@@ -6,28 +6,50 @@ from sqlalchemy.sql import select
 from pydantic import BaseModel
 from typing import List
 from sqlalchemy import create_engine
+import config
 
-engine = create_engine("sqlite:///data.db", echo=True)
+database_username = config.database_username
+database_password = config.database_password
+database_server = config.database_server
+database_schema = config.database_schema
+
+engine = create_engine(f"mysql+pymysql://{database_username}:{database_password}@{database_server}/{database_schema}?charset=utf8")
+
 
 metadata = MetaData()
 concerts = Table('concerts',
                  metadata,
                  Column('id', Integer, primary_key=True),
-                 Column('date', String),
-                 Column('band_configuration', String),
-                 Column('venue_name', String),
-                 Column('venue_city', String),
-                 Column('venue_state', String),
-                 Column('venue_country', String),
-                 Column('taper_name', String),
-                 Column('recording_type', String),
-                 Column('description', String)
+                 Column('date', String(length=1024)),
+                 Column('band_configuration', String(length=1024)),
+                 Column('venue_name', String(length=1024)),
+                 Column('venue_city', String(length=1024)),
+                 Column('venue_state', String(length=1024)),
+                 Column('venue_country', String(length=1024)),
+                 Column('taper_name', String(length=1024)),
+                 Column('recording_type', String(length=1024)),
+                 Column('description', String(length=1024))
                  )
+
+concert_dirs = Table('concert_dirs',
+                     metadata,
+                     Column('id', Integer, primary_key=True),
+                     Column('local_path', String(length=2048)),
+                     Column('web_path', String(length=2048)),
+                     Column('date_from_directory_name', String(length=2048)),
+                     Column('band_configuration_from_directory_name', String(length=2048))
+                     )
+
+xref_concerts_concert_dir = Table('xref_concerts_concert_dir',
+                                  metadata,
+                                  Column('concert_id', ForeignKey('concerts.id')),
+                                  Column('concert_dir_id', ForeignKey('concert_dirs.id'))
+                                  )
 
 songs = Table('songs',
               metadata,
               Column('id', Integer, primary_key=True),
-              Column('name', String)
+              Column('name', String(length=2048))
               )
 
 xref_concerts_songs = Table('xref_concerts_songs',
@@ -65,13 +87,23 @@ class ConcertModel(BaseModel):
     recording_type: str #TODO: Create a separate tabl and model for this?
     description: str
 
+
+class ConcertDirModel(BaseModel):
+    local_path: str
+    web_path: str
+    date_from_directory_name: str
+    band_configuration_from_directory_name: str
+
+
 class SetlistSongModel(BaseModel):
     position: int
     song_title: str
 
+
 class SetlistModel(BaseModel):
     concert_date: str
     setlist: List[SetlistSongModel]
+
 
 #Song Model #TODO: Create This?
 
@@ -81,6 +113,28 @@ app = FastAPI()
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+# ConcertDir Entry Points
+@app.get("/concert_dir/")
+async def all_concert_dirs():
+    sql_query = select([concert_dirs])
+    result = conn.execute(sql_query)
+    return jsonable_encoder([dict(row) for row in result])
+
+@app.get("/concert_dir/{concert_date}")
+async def get_concert(concert_date: str):
+    sql_query = select([concert_dirs]).where(concert_dirs.c.date_from_directory_name == concert_date)
+    result = conn.execute(sql_query)
+    json_result = jsonable_encoder([dict(row) for row in result])
+    return json_result
+
+
+
+@app.post("/concert_dir/")
+async def post_concert_dir(concert_dir: ConcertDirModel):
+    json_concert = jsonable_encoder(concert_dir)
+    conn.execute(concert_dirs.insert(), json_concert)
+    return concert_dir
 
 # Concert EntryPoints
 @app.get("/concert/")
@@ -184,4 +238,5 @@ async def get_concert_setlist(concert_date: str):
     return json_result
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='localhost', port=8000)
+    # uvicorn.run(app, host='127.0.0.1', port=6666)
+    uvicorn.run(app)
