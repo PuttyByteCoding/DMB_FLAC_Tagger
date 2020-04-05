@@ -14,18 +14,10 @@ async def all_concerts():
     sql_query = select([concerts])
     result = conn.execute(sql_query)
     return jsonable_encoder([dict(row) for row in result])
-# Concert EntryPoints
 
 
 @router.post("/concerts/", tags=['concerts']) #Create a concert TODO: Should I support put and post?
 async def post_concert(concert: ConcertModel):
-    json_concert = jsonable_encoder(concert)
-    conn.execute(concerts.insert(), json_concert)
-    return concert
-
-
-@router.put("/concerts/", tags=['concerts']) #Update a concert TODO: Should I support put and post?
-async def put_concert(concert: ConcertModel):
     json_concert = jsonable_encoder(concert)
     conn.execute(concerts.insert(), json_concert)
     return concert
