@@ -27,6 +27,7 @@ async def all_songs():
 @router.post("/songs/", tags=['songs'])
 async def post_songs(songs_list: List[SongModel]):
     json_songs_list = jsonable_encoder(songs_list)
-    conn.execute(songs.insert(), json_songs_list)
+    for song in json_songs_list:
+        conn.execute(songs.insert(), song)
     return json_songs_list
 
