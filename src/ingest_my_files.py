@@ -4,17 +4,20 @@ import requests
 import json
 import shutil
 import re
+import config
 
 def add_concert_dir_to_database(show_dict):
     session = requests.Session()
-    request = session.post(f'http://localhost:8000/concert_dir/',
+    request = session.post(f'{config.webserver_for_api}/concert_dirs/',
                            headers={
                                'Content-type': 'application/json',
                                'Accept': 'text/plain'},
                            data=json.dumps(show_dict))
     if request.status_code == 200:
+        logger.info(f"Added concert directory to database: {show_dict['local_path']}")
         return True
     else:
+        logger.warning(f"Failed to add concert directory to database: {show_dict['local_path']}")
         return False
 
 
