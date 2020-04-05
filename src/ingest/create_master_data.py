@@ -4,6 +4,23 @@ import config
 from loguru import logger
 
 def main():
+    """
+    Run this to populate Master versions of:
+        - Venues
+        - SongTitles
+        - Guests
+    This data will be used when tagging my shows
+    """
+    # Setup unknown entries
+    unknown_venue = [{'name': 'Unknown', 'city': 'Unknown', 'state': 'Unknown'}]
+    add_venue_to_database(unknown_venue, "No URL.  Adding Value for unknown")
+
+    unknown_song = [{'name': 'Unknown'}]
+    add_songs_to_database(unknown_song, "No URL.  Adding Value for unknown")
+
+    unknown_guest = [{'name': 'Unknown', 'instrument': 'Unknown'}]
+    add_guests_to_database(unknown_guest, "No URL.  Adding Value for unknown")
+
     with open("/Volumes/RAID/Code/Python3/DMB_FLAC_Tagger/ExternalData/results_1989-2019.txt", "rb") as f:
         logger.info("Reading show data from JSON file")
         show_list = json.load(f)
@@ -18,24 +35,12 @@ def main():
                 venue_dict = {
                     'name': show['venue']['venue_name'],
                     'city': show['venue']['city'],
-                    'state': show['venue']['state'],
-                    'country': show['venue']['venue_name'],
+                    'state': show['venue']['state']
                 }
-                if show['venue']['state'] in us_states_list:
-                    venue_dict['country'] = "USA"
-                else:
-                    venue_dict['country'] = "Need to determine, and update venue. Not in USA"
             except:
                 logger.error(f"Could not parse show {show['show_url']}")
-            add_venue_to_database(venue_dict, show['show_url'])
+            add_venue_to_database([venue_dict], show['show_url'])
 
-            # Process Guest Info
-
-            try:
-                guests_list = []
-
-            except:
-                logger.error(f"Could not parse guests from setlist. {show['show_url']}")
 
             # Process Songs and Song Guests From Antsmarching
             try:
@@ -110,8 +115,5 @@ def add_venue_to_database(venue_dict, show_url):
         return False
 
 
-
-
 if __name__ == '__main__':
-    us_states_list = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
     main()
