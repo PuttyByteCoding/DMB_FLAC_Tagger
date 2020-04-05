@@ -59,6 +59,22 @@ xref_concerts_songs = Table('xref_concerts_songs',
                             Column('setlist_position', Integer)
                             )
 
+venues = Table('venues',
+               metadata,
+               Column('id', Integer, primary_key=True),
+               Column('name', String(length=2048)),
+               Column('city', String(length=2048)),
+               Column('state', String(length=2048)),
+               Column('country', String(length=2048)),
+               )
+
+xref_concerts_venues = Table('xref_concerts_venues',
+                             metadata,
+                             Column('concert_id', ForeignKey('concerts.id')),
+                             Column('venue_id', ForeignKey('venues.id'))
+                             )
+
+
 metadata.create_all(engine)
 conn = engine.connect()
 
@@ -75,7 +91,13 @@ conn = engine.connect()
 #             [{'concert_id': 1,'song_id': 34,'setlist_position': 1},{'concert_id': 1,'song_id': 23,'setlist_position': 2},{'concert_id': 1,'song_id': 14,'setlist_position': 3},{'concert_id': 1,'song_id': 58,'setlist_position': 4},{'concert_id': 1,'song_id': 97,'setlist_position': 5},{'concert_id': 1,'song_id': 102,'setlist_position': 6},{'concert_id': 1,'song_id': 25,'setlist_position': 7},{'concert_id': 1,'song_id': 7,'setlist_position': 8}]
 #              )
 
-#Concert Model
+
+class VenueModel(BaseModel):
+    name: str
+    city: str
+    state: str
+    country: str
+
 class ConcertModel(BaseModel):
     date: str
     band_configuration: str
@@ -114,6 +136,53 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
+# Venue Entry Points
+@app.get("/venue/")
+async def get_venues():
+    sql_query = select([venues])
+    result = conn.execute(sql_query)
+    return jsonable_encoder([dict(row) for row in result])
+
+@app.get("/venue/{name}")
+async def get_venue_by_name(name: str):
+    sql_query = select([venues]).where(venues.c.name == name)
+    result = conn.execute(sql_query)
+    json_result = jsonable_encoder([dict(row) for row in result])
+    return json_result
+
+@app.post("/venue/")
+async def post_venue(venue: VenueModel):
+    json_venue = jsonable_encoder(venue)
+
+    # Check to see if venue name is already in the database
+    venue_name_results = conn.execute(select([venues])
+                                      .where(venues.c.name == json_venue['name'])).fetchall()
+    if len(venue_name_results) == 0:
+        conn.execute(venues.insert(), json_venue)
+        return venue
+
+    # Check to see if venue Name and City are already in the database
+    venue_name_city_results = conn.execute(select([venues])
+                                           .where(venues.c.name == json_venue['name'])
+                                           .where(venues.c.city == json_venue['city'])).fetchall()
+    if len(venue_name_city_results) == 0:
+        conn.execute(venues.insert(), json_venue)
+        return venue
+
+    # Check to see if venue Name and City and State are already in the database
+    venue_name_city_state_results = conn.execute(select([venues])
+                                           .where(venues.c.name == json_venue['name'])
+                                           .where(venues.c.city == json_venue['city'])
+                                           .where(venues.c.state == json_venue['state'])
+                                           ).fetchall()
+    if len(venue_name_city_state_results) == 0:
+        conn.execute(venues.insert(), json_venue)
+        return venue
+
+    #Entry already exists
+    return venue
+
+
 # ConcertDir Entry Points
 @app.get("/concert_dir/")
 async def all_concert_dirs():
@@ -127,8 +196,6 @@ async def get_concert(concert_date: str):
     result = conn.execute(sql_query)
     json_result = jsonable_encoder([dict(row) for row in result])
     return json_result
-
-
 
 @app.post("/concert_dir/")
 async def post_concert_dir(concert_dir: ConcertDirModel):
@@ -239,4 +306,4 @@ async def get_concert_setlist(concert_date: str):
 
 if __name__ == '__main__':
     # uvicorn.run(app, host='127.0.0.1', port=6666)
-    uvicorn.run(app)
+    uvicorn.run(app, port=6666)
