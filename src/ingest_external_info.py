@@ -26,26 +26,62 @@ def main():
                 else:
                     venue_dict['country'] = "Need to determine, and update venue. Not in USA"
             except:
-                logger.error(f"Could not parse show {show['venue'][1]}")
-            add_venue_to_database(venue_dict)
+                logger.error(f"Could not parse show {show['show_url']}")
+            add_venue_to_database(venue_dict, show['show_url'])
 
             # Process Guest Info
 
-            # Process Songs From Antsmarching
+            try:
+                guests_list = []
+
+            except:
+                logger.error(f"Could not parse guests from setlist. {show['show_url']}")
+
+            # Process Songs and Song Guests From Antsmarching
             try:
                 songs_list = []
+                guests_list = []
                 for song in show['setlist']:
                     song_dict = {'name': song['song_name']}
                     songs_list.append(song_dict)
+                    if song['guests'] != "":
+                        guest = {
+                            'name': song['guests'],
+                            'instrument': ''
+                        }
+                        guests_list.append(guest)
+
+                # Add Songs
                 if len(songs_list) > 0:
-                    add_songs_to_database(songs_list)
+                    add_songs_to_database(songs_list, show['show_url'])
                 else:
-                    logger.warning(f"No songs in this setlist: {show['setlist']}")
+                    logger.warning(f"No songs in this setlist: {show['show_url']}")
+
+                # Add Guests
+                if len(guests_list) > 0:
+                    add_guests_to_database(guests_list, show['show_url'])
+                else:
+                    logger.warning(f"No Guests in this setlist: {show['show_url']}")
+
             except:
-                logger.error(f"Could not parse songs from setlist. {show['setlist']}")
+                logger.error(f"Could not parse songs from setlist. {show['show_url']}")
 
 
-def add_songs_to_database(songs_list):
+def add_guests_to_database(guest_list, show_url):
+    session = requests.Session()
+    request = session.post(f'{config.webserver_for_api}/guests/',
+                           headers={
+                               'Content-type': 'application/json',
+                               'Accept': 'text/plain'},
+                           data=json.dumps(guest_list))
+    if request.status_code == 200:
+        logger.info(f"Added Guests to database: {show_url}")
+        return True
+    else:
+        logger.warning(f"Failed to add Guests to database: {guest_list} {show_url}.")
+        return False
+
+def add_songs_to_database(songs_list, show_url):
     session = requests.Session()
     request = session.post(f'{config.webserver_for_api}/songs/',
                            headers={
@@ -53,13 +89,13 @@ def add_songs_to_database(songs_list):
                                'Accept': 'text/plain'},
                            data=json.dumps(songs_list))
     if request.status_code == 200:
-        logger.info(f"Added Songs to database,")
+        logger.info(f"Added Songs to database: {show_url}")
         return True
     else:
-        logger.warning(f"Failed to add Songs to database.")
+        logger.warning(f"Failed to add Songs to database: {songs_list} {show_url}.")
         return False
 
-def add_venue_to_database(venue_dict):
+def add_venue_to_database(venue_dict, show_url):
     session = requests.Session()
     request = session.post(f'{config.webserver_for_api}/venues/',
                            headers={
@@ -67,10 +103,10 @@ def add_venue_to_database(venue_dict):
                                'Accept': 'text/plain'},
                            data=json.dumps(venue_dict))
     if request.status_code == 200:
-        logger.info(f"Added Venue to database: {venue_dict['name']}")
+        logger.info(f"Added Venue to database: {show_url}")
         return True
     else:
-        logger.warning(f"Failed to add Venue to database: {venue_dict['name']}")
+        logger.warning(f"Failed to add Venue to database: {venue_dict} {show_url}")
         return False
 
 
