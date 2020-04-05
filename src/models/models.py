@@ -6,19 +6,17 @@ class VenueModel(BaseModel):
     name: str
     city: str
     state: str
-    country: str
+    # country: str
 
 
 class ConcertModel(BaseModel):
     date: str
     band_configuration: str
-    venue_name: str  #TODO: Create a separate tabl and model for this?
-    venue_city: str
-    venue_state: str
-    venue_country: str
+    venue_id: int
     taper_name: str #TODO: Create a separate tabl and model for this?
     recording_type: str #TODO: Create a separate tabl and model for this?
-    description: str
+    notes: str
+    info_text_file_contents: str
 
 
 class ConcertDirModel(BaseModel):
@@ -26,6 +24,7 @@ class ConcertDirModel(BaseModel):
     web_path: str
     date_from_directory_name: str
     band_configuration_from_directory_name: str
+
 
 class SongModel(BaseModel):
     name: str
