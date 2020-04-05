@@ -4,6 +4,7 @@ from sqlalchemy.sql import select
 from database import engine
 from database import concerts, concert_dirs, venues, songs, xref_concerts_concert_dir, xref_concerts_songs, xref_concerts_venues
 from models.models import ConcertDirModel, ConcertModel, VenueModel, SetlistModel, SetlistSongModel
+from typing import List
 
 router = APIRouter()
 conn = engine.connect()
@@ -24,34 +25,41 @@ async def get_venue_by_name(name: str):
     return json_result
 
 
-@router.post("/venues/", tags=['venues'])
-async def post_venue(venue: VenueModel):
+@router.post("/venues/get_id/", tags=['venues'])
+async def get_venue_id(venue: VenueModel):
     json_venue = jsonable_encoder(venue)
+    venue_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name'])
+                                 .where(venues.c.city == json_venue['city'])
+                                 .where(venues.c.state == json_venue['state'])).fetchall()
+    if len(venue_results) == 1:
+        return venue_results[0]['id']
+    elif len(venue_results) > 1:
+        return "Found more than one."
+    else:
+        return "Could not find venue"
 
-    # Check to see if venue name is already in the database
-    venue_name_results = conn.execute(select([venues])
-                                      .where(venues.c.name == json_venue['name'])).fetchall()
-    if len(venue_name_results) == 0:
-        conn.execute(venues.insert(), json_venue)
-        return venue
 
-    # Check to see if venue Name and City are already in the database
-    venue_name_city_results = conn.execute(select([venues])
-                                           .where(venues.c.name == json_venue['name'])
-                                           .where(venues.c.city == json_venue['city'])).fetchall()
-    if len(venue_name_city_results) == 0:
-        conn.execute(venues.insert(), json_venue)
-        return venue
+@router.post("/venues/", tags=['venues'])
+async def post_venue(venue: List[VenueModel]):
+    json_venue_list = jsonable_encoder(venue)
 
-    # Check to see if venue Name and City and State are already in the database
-    venue_name_city_state_results = conn.execute(select([venues])
-                                           .where(venues.c.name == json_venue['name'])
-                                           .where(venues.c.city == json_venue['city'])
-                                           .where(venues.c.state == json_venue['state'])
-                                           ).fetchall()
-    if len(venue_name_city_state_results) == 0:
-        conn.execute(venues.insert(), json_venue)
-        return venue
+    for json_venue in json_venue_list:
+        # Check to see if venue name is already in the database
+        venue_name_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name'])).fetchall()
+        if len(venue_name_results) == 0:
+            conn.execute(venues.insert(), json_venue)
+            continue
 
-    #Entry already exists
-    return venue
+        # Check to see if venue Name and City are already in the database
+        venue_name_city_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name']).where(venues.c.city == json_venue['city'])).fetchall()
+        if len(venue_name_city_results) == 0:
+            conn.execute(venues.insert(), json_venue)
+            continue
+
+        # Check to see if venue Name and City and State are already in the database
+        venue_name_city_state_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name']).where(venues.c.city == json_venue['city']).where(venues.c.state == json_venue['state'])).fetchall()
+        if len(venue_name_city_state_results) == 0:
+            conn.execute(venues.insert(), json_venue)
+            continue
+
+    return json_venue_list
