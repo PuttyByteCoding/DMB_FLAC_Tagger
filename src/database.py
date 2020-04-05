@@ -17,13 +17,11 @@ concerts = Table('concerts',
                  Column('id', Integer, primary_key=True),
                  Column('date', String(length=1024)),
                  Column('band_configuration', String(length=1024)),
-                 Column('venue_name', String(length=1024)),
-                 Column('venue_city', String(length=1024)),
-                 Column('venue_state', String(length=1024)),
-                 Column('venue_country', String(length=1024)),
+                 Column('venue_id', String(length=1024)),
                  Column('taper_name', String(length=1024)),
                  Column('recording_type', String(length=1024)),
-                 Column('description', String(length=1024))
+                 Column('notes', String(length=1024)),
+                 Column('info_text_file_contents', String(length=1024))
                  )
 
 concert_dirs = Table('concert_dirs',
@@ -59,8 +57,8 @@ venues = Table('venues',
                Column('id', Integer, primary_key=True),
                Column('name', String(length=2048)),
                Column('city', String(length=2048)),
-               Column('state', String(length=2048)),
-               Column('country', String(length=2048)),
+               Column('state', String(length=2048))
+               # Column('country', String(length=2048))
                )
 
 xref_concerts_venues = Table('xref_concerts_venues',
