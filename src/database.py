@@ -69,5 +69,11 @@ xref_concerts_venues = Table('xref_concerts_venues',
                              Column('venue_id', ForeignKey('venues.id'))
                              )
 
+guests = Table('guests',
+               metadata,
+               Column('id', Integer, primary_key=True),
+               Column('name', String(length=500), unique=True),
+               Column('instrument', String(length=1024))
+               )
 
 # metadata.create_all(engine)

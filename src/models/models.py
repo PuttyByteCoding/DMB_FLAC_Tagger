@@ -39,3 +39,8 @@ class SetlistSongModel(BaseModel):
 class SetlistModel(BaseModel):
     concert_date: str
     setlist: List[SetlistSongModel]
+
+
+class GuestModel(BaseModel):
+    name: str
+    instrument: str
