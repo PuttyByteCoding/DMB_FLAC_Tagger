@@ -2,6 +2,14 @@ from pydantic import BaseModel
 from typing import List, Dict
 
 
+class TaperModel(BaseModel):
+    name: str
+
+
+class RecordingTypeModel(BaseModel):
+    rec_type: str
+
+
 class VenueModel(BaseModel):
     name: str
     city: str

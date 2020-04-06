@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from database import engine, metadata
-from routers import venues, setlists, songs, concerts, concert_dirs, guests
+from routers import venues, setlists, songs, concerts, concert_dirs, guests, tapers, recording_types
 
 metadata.create_all(engine)
 conn = engine.connect()
@@ -13,6 +13,8 @@ app.include_router(songs.router)
 app.include_router(concerts.router)
 app.include_router(concert_dirs.router)
 app.include_router(guests.router)
+app.include_router(tapers.router)
+app.include_router(recording_types.router)
 
 @app.get("/")
 async def root():

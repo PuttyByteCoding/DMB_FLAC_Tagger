@@ -58,7 +58,6 @@ venues = Table('venues',
                Column('name', String(length=2048)),
                Column('city', String(length=2048)),
                Column('state', String(length=2048))
-               # Column('country', String(length=2048))
                )
 
 xref_concerts_venues = Table('xref_concerts_venues',
@@ -72,6 +71,19 @@ guests = Table('guests',
                Column('id', Integer, primary_key=True),
                Column('name', String(length=500), unique=True),
                Column('instrument', String(length=1024))
+               )
+
+tapers = Table('tapers',
+               metadata,
+               Column('id', Integer, primary_key=True),
+               Column('name', String(length=500), unique=True)
+               )
+
+
+recording_types = Table('recording_types',
+               metadata,
+               Column('id', Integer, primary_key=True),
+               Column('rec_type', String(length=500), unique=True)
                )
 
 # metadata.create_all(engine)
