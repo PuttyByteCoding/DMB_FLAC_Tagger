@@ -21,16 +21,20 @@ def main():
             show_dict['band_configuration'] = show['band_configuration']
             show_dict['date'] = show['date']
             show_dict['notes'] = "\n".join(show['show_notes'])
-
-            # Get Venue ID
-            venue_name = show['venue']['venue_name']
-            venue_city = show['venue']['city']
-            venue_state = show['venue']['state']
-            venue_id = get_venue_id(venue_name, venue_city, venue_state)
-            show_dict['venue_id'] = venue_id
             show_dict['taper_name'] = "Unknown"
             show_dict['recording_type'] = "Unknown"
             show_dict['info_text_file_contents'] = "N/A Ants Ingest"
+
+            # Get Venue ID
+            try:
+                venue_name = show['venue']['venue_name']
+                venue_city = show['venue']['city']
+                venue_state = show['venue']['state']
+                venue_id = get_venue_id(venue_name, venue_city, venue_state)
+                show_dict['venue_id'] = venue_id
+            except:
+                logger.error(f"Could not locate venue_id.  Setting to 1 (unknown)")
+                show_dict['venue_id'] = 1
 
             add_concert_to_database(show_dict, show['show_url'])
 
