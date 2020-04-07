@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.sql import select, text
 from database import engine
-from database import concerts, concert_dirs, venues, songs, xref_concerts_concert_dir, xref_concerts_songs, xref_concerts_venues
-from models.models import ConcertDirModel, ConcertModel, VenueModel, SetlistModel, SetlistSongModel
+from database import concerts, songs, xref_concerts_songs
+from models.models import SetlistModel
 from sqlalchemy.exc import IntegrityError
 from loguru import logger
 
