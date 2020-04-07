@@ -8,7 +8,7 @@ database_password = config.database_password
 database_server = config.database_server
 database_schema = config.database_schema
 
-engine = create_engine(f"mysql+pymysql://{database_username}:{database_password}@{database_server}/{database_schema}?charset=utf8")
+engine = create_engine(f"mysql+pymysql://{database_username}:{database_password}@{database_server}/{database_schema}?charset=utf8mb4")
 
 
 metadata = MetaData()
