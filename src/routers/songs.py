@@ -4,7 +4,9 @@ from sqlalchemy.sql import select
 from database import engine
 from database import concerts, concert_dirs, venues, songs, xref_concerts_concert_dir, xref_concerts_songs, xref_concerts_venues
 from models.models import ConcertDirModel, ConcertModel, VenueModel, SetlistModel, SetlistSongModel, SongModel
-from typing import List, Dict
+from typing import List
+from sqlalchemy.exc import IntegrityError
+from loguru import logger
 
 router = APIRouter()
 conn = engine.connect()
@@ -17,20 +19,13 @@ async def all_songs():
     json_result = jsonable_encoder([dict(row) for row in result])
     return json_result
 
-# @router.get("/songs/{song_name}")
-# async def get_concert(concert_date: str):
-#     sql_query = select([concert_dirs]).where(concert_dirs.c.date_from_directory_name == concert_date)
-#     result = conn.execute(sql_query)
-#     json_result = jsonable_encoder([dict(row) for row in result])
-#     return json_result
-
 @router.post("/songs/", tags=['songs'])
 async def post_songs(songs_list: List[SongModel]):
     json_songs_list = jsonable_encoder(songs_list)
     for song in json_songs_list:
         try:
             conn.execute(songs.insert(), song)
-        except:
-            pass
+        except IntegrityError as e:
+            logger.info(f"Song already in the database: {e}")
     return json_songs_list
 

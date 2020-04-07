@@ -5,6 +5,8 @@ from database import engine
 from database import tapers
 from models.models import TaperModel
 from typing import List
+from sqlalchemy.exc import IntegrityError
+from loguru import logger
 
 router = APIRouter()
 conn = engine.connect()
@@ -24,7 +26,7 @@ async def post_taper(taper_list: List[TaperModel]):
     for taper in json_tapers_list:
         try:
             conn.execute(tapers.insert(), taper)
-        except:
-            pass
+        except IntegrityError as e:
+            logger.info(f"Taper Data already in the database: {e}")
     return json_tapers_list
 

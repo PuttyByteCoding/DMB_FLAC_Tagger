@@ -4,6 +4,8 @@ from sqlalchemy.sql import select, text
 from database import engine
 from database import concerts, concert_dirs, venues, songs, xref_concerts_concert_dir, xref_concerts_songs, xref_concerts_venues
 from models.models import ConcertDirModel, ConcertModel, VenueModel, SetlistModel, SetlistSongModel
+from sqlalchemy.exc import IntegrityError
+from loguru import logger
 
 router = APIRouter()
 conn = engine.connect()
@@ -21,12 +23,15 @@ async def post_setlist(setlist: SetlistModel):
         sql_get_song_id_query = select([songs]).where(songs.c.name == song.song_title)
         result = conn.execute(sql_get_song_id_query).fetchone()
         song_id = result["id"]
-        conn.execute(xref_concerts_songs.insert(),
-                     {
-                         'concert_id': concert_id,
-                         'song_id': song_id,
-                         'setlist_position': song.position
-                     })
+        try:
+            conn.execute(xref_concerts_songs.insert(),
+                         {
+                             'concert_id': concert_id,
+                             'song_id': song_id,
+                             'setlist_position': song.position
+                         })
+        except IntegrityError as e:
+            logger.info(f"Setlist already in the database: {e}")
     return {"message": "Setlist Added"}
 
 
@@ -42,12 +47,16 @@ async def put_setlist(setlist: SetlistModel):
         sql_get_song_id_query = select([songs]).where(songs.c.name == song.song_title)
         result = conn.execute(sql_get_song_id_query).fetchone()
         song_id = result["id"]
-        conn.execute(xref_concerts_songs.insert(),
-                     {
-                         'concert_id': concert_id,
-                         'song_id': song_id,
-                         'setlist_position': song.position
-                     })
+        try:
+            conn.execute(xref_concerts_songs.insert(),
+                         {
+                             'concert_id': concert_id,
+                             'song_id': song_id,
+                             'setlist_position': song.position
+                         })
+        except IntegrityError as e:
+            logger.info(f"Setlist already in the database: {e}")
+
     return {"message": "Setlist Added"}
 
 

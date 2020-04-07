@@ -5,6 +5,8 @@ from database import engine
 from database import recording_types
 from models.models import RecordingTypeModel
 from typing import List
+from sqlalchemy.exc import IntegrityError
+from loguru import logger
 
 router = APIRouter()
 conn = engine.connect()
@@ -24,7 +26,7 @@ async def post_recording_types(taper_list: List[RecordingTypeModel]):
     for recording_type in json_recording_types_list:
         try:
             conn.execute(recording_types.insert(), recording_type)
-        except:
-            pass
+        except IntegrityError as e:
+            logger.info(f"Recording Type already in the database: {e}")
     return json_recording_types_list
 

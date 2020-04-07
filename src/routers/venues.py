@@ -5,6 +5,8 @@ from database import engine
 from database import concerts, concert_dirs, venues, songs, xref_concerts_concert_dir, xref_concerts_songs, xref_concerts_venues
 from models.models import ConcertDirModel, ConcertModel, VenueModel, SetlistModel, SetlistSongModel
 from typing import List
+from sqlalchemy.exc import IntegrityError
+from loguru import logger
 
 router = APIRouter()
 conn = engine.connect()
@@ -47,19 +49,29 @@ async def post_venue(venue: List[VenueModel]):
         # Check to see if venue name is already in the database
         venue_name_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name'])).fetchall()
         if len(venue_name_results) == 0:
-            conn.execute(venues.insert(), json_venue)
+            try:
+                conn.execute(venues.insert(), json_venue)
+            except IntegrityError as e:
+                logger.info(f"Venue Data already in the database: {e}")
             continue
 
         # Check to see if venue Name and City are already in the database
         venue_name_city_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name']).where(venues.c.city == json_venue['city'])).fetchall()
         if len(venue_name_city_results) == 0:
-            conn.execute(venues.insert(), json_venue)
+            try:
+                conn.execute(venues.insert(), json_venue)
+            except IntegrityError as e:
+                logger.info(f"Venue Data already in the database: {e}")
+
             continue
 
         # Check to see if venue Name and City and State are already in the database
         venue_name_city_state_results = conn.execute(select([venues]).where(venues.c.name == json_venue['name']).where(venues.c.city == json_venue['city']).where(venues.c.state == json_venue['state'])).fetchall()
         if len(venue_name_city_state_results) == 0:
-            conn.execute(venues.insert(), json_venue)
+            try:
+                conn.execute(venues.insert(), json_venue)
+            except IntegrityError as e:
+                logger.info(f"Venue Data already in the database: {e}")
             continue
 
     return json_venue_list
