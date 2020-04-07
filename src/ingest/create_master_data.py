@@ -26,50 +26,63 @@ def main():
         show_list = json.load(f)
         shows_processed = 0
         shows_count = len(show_list)
-        for show in show_list:
-            shows_processed += 1
+    for show in show_list:
+        shows_processed += 1
 
-            # Process Venue Info
-            logger.info(f"Processing show {shows_processed} of {shows_count}")
+        # Process Venue Info
+        logger.info(f"Processing show {shows_processed} of {shows_count}")
+        try:
+            # Check for "Could not parse error
+            venue_dict = {
+                'name': show['venue']['venue_name'],
+                'city': show['venue']['city'],
+                'state': show['venue']['state']
+            }
+        except Exception as e1:
+            # I know a try catch in a try catch is a ducttape fix, but I don't want to spend too much time using pydantic right now.
+            # #TODO: Do this using pydantic
             try:
-                venue_dict = {
-                    'name': show['venue']['venue_name'],
-                    'city': show['venue']['city'],
-                    'state': show['venue']['state']
-                }
-            except:
-                logger.error(f"Could not parse show {show['show_url']}")
-            add_venue_to_database([venue_dict], show['show_url'])
+                if show['venue'][0] == 'Could not parse':
+                    logger.info(f"Site Scrapper failed to parse the venue info: {show['show_url']}")
+            except Exception as e2:
+                logger.error(f"Could not parse show.  Unknown Error {show['show_url']} {e1}")
+        add_venue_to_database([venue_dict], show['show_url'])
 
 
-            # Process Songs and Song Guests From Antsmarching
+        # Process Songs and Song Guests From Antsmarching
+        songs_list = []
+        guests_list = []
+        try:
+            for song in show['setlist']:
+                song_dict = {'name': song['song_name']}
+                songs_list.append(song_dict)
+                if song['guests'] != "":
+                    # Ants stores guests as comma separated first names
+                    for g in song['guests'].split(","):
+                        guest = {
+                            'name': g.strip(),
+                            'instrument': ''
+                        }
+                        guests_list.append(guest)
+
+        except Exception as e1:
+            # I know a try catch in a try catch is a ducttape fix, but I don't want to spend too much time using pydantic right now.
+            # #TODO: Do this using pydantic
             try:
-                songs_list = []
-                guests_list = []
-                for song in show['setlist']:
-                    song_dict = {'name': song['song_name']}
-                    songs_list.append(song_dict)
-                    if song['guests'] != "":
-                        # Ants stores guests as comma separated first names
-                        for g in song['guests'].split(","):
-                            guest = {
-                                'name': g.strip(),
-                                'instrument': ''
-                            }
-                            guests_list.append(guest)
+                if show['setlist'][0] == 'Could not parse':
+                    logger.info(f"Site Scrapper failed to parse the setlist: {show['show_url']}")
+            except Exception as e2:
+                logger.error(f"Could not parse songs from setlist. Unknown Error {show['show_url']} {e1}")
 
-                # Add Songs
-                if len(songs_list) > 0:
-                    add_songs_to_database(songs_list, show['show_url'])
-                else:
-                    logger.warning(f"No songs in this setlist: {show['show_url']}")
+        # Add Songs
+        if len(songs_list) > 0:
+            add_songs_to_database(songs_list, show['show_url'])
+        else:
+            logger.info(f"No songs in this setlist: {show['show_url']}")
 
-                # Add Guests
-                if len(guests_list) > 0:
-                    add_guests_to_database(guests_list, show['show_url'])
-
-            except:
-                logger.error(f"Could not parse songs from setlist. {show['show_url']}")
+        # Add Guests
+        if len(guests_list) > 0:
+            add_guests_to_database(guests_list, show['show_url'])
 
 
 def add_guests_to_database(guest_list, show_url):
