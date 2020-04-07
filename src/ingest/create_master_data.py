@@ -21,7 +21,7 @@ def main():
     unknown_guest = [{'name': 'Unknown', 'instrument': 'Unknown'}]
     add_guests_to_database(unknown_guest, "No URL.  Adding Value for unknown")
 
-    with open("/Volumes/RAID/Code/Python3/DMB_FLAC_Tagger/ExternalData/results_1989-2019.txt", "rb") as f:
+    with open("/Users/mark/PycharmProjects/DMB_FLAC_Tagger/ExternalData/results_1989-2019.txt", "rb") as f:
         logger.info("Reading show data from JSON file")
         show_list = json.load(f)
         shows_processed = 0
@@ -50,11 +50,13 @@ def main():
                     song_dict = {'name': song['song_name']}
                     songs_list.append(song_dict)
                     if song['guests'] != "":
-                        guest = {
-                            'name': song['guests'],
-                            'instrument': ''
-                        }
-                        guests_list.append(guest)
+                        # Ants stores guests as comma separated first names
+                        for g in song['guests'].split(","):
+                            guest = {
+                                'name': g.strip(),
+                                'instrument': ''
+                            }
+                            guests_list.append(guest)
 
                 # Add Songs
                 if len(songs_list) > 0:
@@ -65,8 +67,6 @@ def main():
                 # Add Guests
                 if len(guests_list) > 0:
                     add_guests_to_database(guests_list, show['show_url'])
-                else:
-                    logger.warning(f"No Guests in this setlist: {show['show_url']}")
 
             except:
                 logger.error(f"Could not parse songs from setlist. {show['show_url']}")
